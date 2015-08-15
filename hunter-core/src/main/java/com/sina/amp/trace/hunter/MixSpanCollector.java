@@ -3,6 +3,8 @@ package com.sina.amp.trace.hunter;
 import com.github.kristofa.brave.LoggingSpanCollector;
 import com.github.kristofa.brave.SpanCollector;
 import com.github.kristofa.brave.zipkin.ZipkinSpanCollector;
+import com.github.kristofa.brave.zipkin.ZipkinSpanCollectorParams;
+import com.sina.amp.trace.hunter.collector.ZipkinSpanCollectorProxy;
 import com.twitter.zipkin.gen.Span;
 
 public class MixSpanCollector implements SpanCollector{
@@ -12,7 +14,7 @@ public class MixSpanCollector implements SpanCollector{
 	
 	public MixSpanCollector(String host, int port) {
 		this.loggingCollector = new LoggingSpanCollector();
-		this.zipkinConllector = new ZipkinSpanCollector(host, port);
+		this.zipkinConllector = new ZipkinSpanCollectorProxy(host, port);
 	}
 
 	@Override
