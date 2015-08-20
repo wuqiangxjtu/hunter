@@ -16,19 +16,24 @@ public class Tracer {
 	private final SpanCollector spanCollector;
 
 	private final ThreadState state;
+	
+	private final Long traceId;
 
 	private AtomicBoolean IS_SAMPLE = new AtomicBoolean(true);
 
 	public Tracer(ThreadState state, SpanCollector spanCollector,
-			TraceFilters traceFilters) {
+			TraceFilters traceFilters, Long traceId) {
 		this.state = state;
 		this.spanCollector = spanCollector;
-
-		for (TraceFilter traceFilter : traceFilters.getTraceFilters()) {
-			if (!traceFilter.trace(state.getEndpoint().getService_name())) {
-				IS_SAMPLE.set(false);
+		this.traceId = traceId;
+		if(traceFilters != null) {
+			for (TraceFilter traceFilter : traceFilters.getTraceFilters()) {
+				if (!traceFilter.trace(state.getEndpoint().getService_name())) {
+					IS_SAMPLE.set(false);
+				}
 			}
 		}
+
 
 	}
 
@@ -47,17 +52,17 @@ public class Tracer {
 	 */
 	public void newSpan(String spanName) {
 		if (IS_SAMPLE.get()) {
-			long newSpanId = RANDOM_GENERATOR.nextLong();
 			try {
 				Span currentSpan = null;
 				currentSpan = state.peek();
-				Span newSpan = new Span(currentSpan.getTrace_id(), spanName,
+				long newSpanId = RANDOM_GENERATOR.nextLong();
+				Span newSpan = new Span(this.traceId, spanName,
 						newSpanId, null, null);
 				newSpan.setParent_id(currentSpan.getId());
 				state.push(newSpan);
 
 			} catch (EmptyStackException e) {
-				Span newSpan = new Span(newSpanId, spanName, newSpanId, null,
+				Span newSpan = new Span(this.traceId, spanName, this.traceId, null,
 						null);
 				state.push(newSpan);
 			}
@@ -114,6 +119,10 @@ public class Tracer {
 		synchronized (span) {
 			span.addToAnnotations(annotation);
 		}
+	}
+	
+	public Long getTraceId() {
+		return traceId;
 	}
 
 }

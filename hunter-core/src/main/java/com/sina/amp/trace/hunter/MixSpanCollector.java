@@ -11,8 +11,13 @@ public class MixSpanCollector implements SpanCollector{
 	private SpanCollector zipkinConllector;
 	
 	public MixSpanCollector(String host, int port) {
-		this.loggingCollector = new LoggingSpanCollector();
-		this.zipkinConllector = new ZipkinSpanCollector(host, port);
+		try {
+			this.loggingCollector = new LoggingSpanCollector();
+			this.zipkinConllector = new ZipkinSpanCollector(host, port);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	@Override
