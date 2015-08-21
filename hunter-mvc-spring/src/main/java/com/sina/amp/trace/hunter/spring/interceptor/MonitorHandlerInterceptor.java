@@ -10,6 +10,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import com.github.kristofa.brave.SpanCollector;
 import com.sina.amp.trace.hunter.Hunter;
 import com.sina.amp.trace.hunter.TraceFilters;
+import com.sina.amp.trace.hunter.http.HttpHunter;
 import com.twitter.zipkin.gen.zipkinCoreConstants;
 
 public class MonitorHandlerInterceptor extends HandlerInterceptorAdapter {
@@ -25,10 +26,9 @@ public class MonitorHandlerInterceptor extends HandlerInterceptorAdapter {
 			HttpServletResponse response, Object handler, Exception ex)
 			throws Exception {
 		try{
-			Hunter.submitAnnotation(zipkinCoreConstants.SERVER_SEND);
-			Hunter.collect();
+			HttpHunter.submitServerSendAnnotationAndCollect();
 		}finally {
-			Hunter.clear();
+			HttpHunter.endTrace();
 		}
 		super.afterCompletion(request, response, handler, ex);
 	}
@@ -47,9 +47,8 @@ public class MonitorHandlerInterceptor extends HandlerInterceptorAdapter {
 
 		Boolean b =  super.preHandle(request, response, handler);
 		if(b) {
-			Hunter.beginTrace(request, spanCollector,traceFilters);
-			Hunter.newSpan(request);
-			Hunter.submitAnnotation(zipkinCoreConstants.SERVER_RECV);
+			HttpHunter.startTracer(request, spanCollector, traceFilters);
+			HttpHunter.newSpanWithServerRecvAnnotation(request);
 //			Thread.sleep(1000);
 		}
 

@@ -18,14 +18,17 @@ public class Tracer {
 	private final ThreadState state;
 	
 	private final Long traceId;
+	
+	private final Long parentId;
 
 	private AtomicBoolean IS_SAMPLE = new AtomicBoolean(true);
 
 	public Tracer(ThreadState state, SpanCollector spanCollector,
-			TraceFilters traceFilters, Long traceId) {
+			TraceFilters traceFilters, Long traceId, Long parentId) {
 		this.state = state;
 		this.spanCollector = spanCollector;
 		this.traceId = traceId;
+		this.parentId = parentId;
 		if(traceFilters != null) {
 			for (TraceFilter traceFilter : traceFilters.getTraceFilters()) {
 				if (!traceFilter.trace(state.getEndpoint().getService_name())) {
@@ -64,6 +67,9 @@ public class Tracer {
 			} catch (EmptyStackException e) {
 				Span newSpan = new Span(this.traceId, spanName, this.traceId, null,
 						null);
+				if(this.parentId != null) {
+					newSpan.setParent_id(this.parentId);
+				}
 				state.push(newSpan);
 			}
 

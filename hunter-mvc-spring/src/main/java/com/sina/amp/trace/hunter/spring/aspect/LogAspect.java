@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
 import com.sina.amp.trace.hunter.Hunter;
+import com.sina.amp.trace.hunter.http.HttpHunter;
 import com.twitter.zipkin.gen.zipkinCoreConstants;
 
 @Component
@@ -22,14 +23,12 @@ public class LogAspect {
 
 	@Before("pointCut()")
 	public void before(JoinPoint joinPoint) {
-		Hunter.newSpan(joinPoint.getSignature().toString());
-		Hunter.submitAnnotation(zipkinCoreConstants.SERVER_RECV);
+		HttpHunter.newSpanWithServerRecvAnnotation(joinPoint.getSignature().toString());
 	}
 	
 	@After("pointCut()")
 	public void after(JoinPoint joinPoint) {
-		Hunter.submitAnnotation(zipkinCoreConstants.SERVER_SEND);
-		Hunter.collect();
+		HttpHunter.submitServerSendAnnotationAndCollect();
 	}
 	
 //	@Around("pointCut()")

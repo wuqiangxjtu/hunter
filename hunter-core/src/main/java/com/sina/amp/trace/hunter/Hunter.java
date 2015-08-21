@@ -3,6 +3,7 @@ package com.sina.amp.trace.hunter;
 import java.util.Random;
 
 import com.github.kristofa.brave.SpanCollector;
+import com.twitter.zipkin.gen.zipkinCoreConstants;
 
 public class Hunter {
 
@@ -13,24 +14,34 @@ public class Hunter {
 	public static void startTracer(String ip, int port, String serviceName,
 			SpanCollector spanCollector, final TraceFilters traceFilters) {
 		try {
-			startTracer(ip, port, serviceName, spanCollector, traceFilters,
-					RANDOM_GENERATOR.nextLong());
+			Hunter.startTracer(ip, port, serviceName, spanCollector, traceFilters,
+					RANDOM_GENERATOR.nextLong(),null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	static void startTracer(String ip, int port, String serviceName,
+	protected static void startTracer(String ip, int port, String serviceName,
 			SpanCollector spanCollector, final TraceFilters traceFilters,
-			Long traceId) {
+			Long traceId, Long parentId) {
 		try {
 			Hunter.TRACER.set(new Tracer(new ThreadState(ip, port, serviceName),
-					spanCollector, traceFilters, traceId));
+					spanCollector, traceFilters, traceId, parentId));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
+	}
+	
+	public static void newSpanWithServerRecvAnnotation(String spanName) {
+		Hunter.newSpan(spanName);
+		Hunter.submitAnnotation(zipkinCoreConstants.SERVER_RECV);
+	}
+	
+	public static void submitServerSendAnnotationAndCollect() {
+		Hunter.submitAnnotation(zipkinCoreConstants.SERVER_SEND);
+		Hunter.collect();
 	}
 
 	public static void newSpan(String spanName) {

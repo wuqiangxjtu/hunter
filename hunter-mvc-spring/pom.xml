@@ -14,7 +14,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.sina.amp.trace.hunter</groupId>
-			<artifactId>hunter-core</artifactId>
+			<artifactId>hunter-core-http</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>

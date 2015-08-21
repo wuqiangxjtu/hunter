@@ -1,10 +1,14 @@
 package com.sina.amp.trace.hunter.spring.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 @Component
 public class ServiceB {
+	
+	Logger LOG = LoggerFactory.getLogger(ServiceB.class);
 	
 	public void method1() {
 //		try {
@@ -12,15 +16,15 @@ public class ServiceB {
 //		} catch (InterruptedException e) {
 //			e.printStackTrace();
 //		}
-		System.out.println("ServiceB-Method1 called.");
+		LOG.info("ServiceB-Method1 called.");
 	}
 	
 	public void method2() {
-		System.out.println("ServiceB-Method2 called.");
+		LOG.info("ServiceB-Method2 called.");
 		method3();
 	}
 
 	public void method3() {
-		System.out.println("ServiceB-Method3 called.");
+		LOG.info("ServiceB-Method3 called.");
 	}
 }

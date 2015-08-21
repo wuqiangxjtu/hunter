@@ -21,7 +21,7 @@
 		<pluginRepository>
 			<id>sina</id>
 			<name>sina</name>
-			<url>http://10.13.3.72:8080/nexus/content/groups/public</url>
+			<url>http://10.13.3.72:8880/nexus/content/groups/public</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -54,11 +54,6 @@
 			<artifactId>junit</artifactId>
 			<version>4.9</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.kristofa</groupId>
