@@ -12,6 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.github.kristofa.brave.LoggingSpanCollector;
 import com.github.kristofa.brave.SpanCollector;
 import com.github.kristofa.brave.TraceFilter;
 import com.sina.amp.trace.hunter.FixedSampleRateTraceFilter;
@@ -36,10 +37,11 @@ public class HttpHunterTest {
 		List<TraceFilter> traceList = new ArrayList<TraceFilter>();
 		traceList.add(new FixedSampleRateTraceFilter(1));
 		traceFilters = new TraceFilters(traceList);
-		spanCollector = new MixSpanCollector("localhost",9410);
-		when(request.getHeader(HunterHttpHeaders.TraceId.getName())).thenReturn("5415072796348909484");
-//		when(request.getHeader(HunterHttpHeaders.SpanId.getName())).thenReturn("5267450487794558941");
-		when(request.getRequestURI()).thenReturn("/hunter/http/test");
+//		spanCollector = new MixSpanCollector("localhost",9410);
+		spanCollector = new LoggingSpanCollector();
+//		when(request.getHeader(HunterHttpHeaders.TraceId.getName())).thenReturn("5415072796348909485");
+//		when(request.getHeader(HunterHttpHeaders.SpanId.getName())).thenReturn("5267450487794558943");
+		when(request.getRequestURI()).thenReturn("/hunter/http/test111");
 		when(request.getLocalAddr()).thenReturn("127.0.0.1");
 		when(request.getLocalPort()).thenReturn(8000);
 		HttpHunter.startTracer(request, spanCollector, traceFilters);

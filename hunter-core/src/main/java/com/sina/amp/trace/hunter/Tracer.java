@@ -127,7 +127,7 @@ public class Tracer {
 		}
 	}
 	
-	public Long getTraceId() {
+	public Long getTheTraceId() {
 		return traceId;
 	}
 

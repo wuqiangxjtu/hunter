@@ -26,8 +26,8 @@ public class SpanCollectorConfiguration {
     public SpanCollector spanCollector() {
 
         // For development purposes we use the logging span collector.
-//        return new LoggingSpanCollector();
+        return new LoggingSpanCollector();
 //    	return new ZipkinSpanCollector("localhost", 9410); 
-    	return new MixSpanCollector("localhost", 9410);
+//    	return new MixSpanCollector("localhost", 9410);
     }
 }

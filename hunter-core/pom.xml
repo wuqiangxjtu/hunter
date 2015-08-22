@@ -10,7 +10,7 @@
 		<repository>
 			<id>sina</id>
 			<name>sina</name>
-			<url>http://10.13.3.72:8080/nexus/content/groups/public</url>
+			<url>http://10.13.3.72:8880/nexus/content/groups/public</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>

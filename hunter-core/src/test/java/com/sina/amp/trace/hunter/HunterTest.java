@@ -5,6 +5,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.github.kristofa.brave.LoggingSpanCollector;
 import com.github.kristofa.brave.SpanCollector;
 import com.sina.amp.trace.hunter.service.FirstService;
 
@@ -19,8 +20,9 @@ public class HunterTest {
 	@Before
 	public void before() {
 		firstService = new FirstService();
-		spanCollector = new MixSpanCollector("localhost", 9410);
-		Hunter.startTracer("127.0.0.1", 8090, "test-service", spanCollector, null);
+//		spanCollector = new MixSpanCollector("localhost", 9410);
+		spanCollector = new LoggingSpanCollector();
+		Hunter.startTracer("127.0.0.1", 8090, "test-service-111", spanCollector, null);
 		
 	}
 	

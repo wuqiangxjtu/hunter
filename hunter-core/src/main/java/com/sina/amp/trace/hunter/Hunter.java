@@ -2,14 +2,22 @@ package com.sina.amp.trace.hunter;
 
 import java.util.Random;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.kristofa.brave.SpanCollector;
 import com.twitter.zipkin.gen.zipkinCoreConstants;
 
 public class Hunter {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(Hunter.class);
 
 	public static ThreadLocal<Tracer> TRACER = new ThreadLocal<Tracer>();
 
 	private final static Random RANDOM_GENERATOR = new Random();
+	
+	protected static final Long NULL_TRACE_ID = 9999999999999L;
+
 
 	public static void startTracer(String ip, int port, String serviceName,
 			SpanCollector spanCollector, final TraceFilters traceFilters) {
@@ -17,7 +25,7 @@ public class Hunter {
 			Hunter.startTracer(ip, port, serviceName, spanCollector, traceFilters,
 					RANDOM_GENERATOR.nextLong(),null);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.warn("start trace exception:" + e);
 		}
 
 	}
@@ -29,7 +37,7 @@ public class Hunter {
 			Hunter.TRACER.set(new Tracer(new ThreadState(ip, port, serviceName),
 					spanCollector, traceFilters, traceId, parentId));
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.warn("start trace exception:" + e);
 		}
 
 	}
@@ -48,7 +56,7 @@ public class Hunter {
 		try {
 			Hunter.TRACER.get().newSpan(spanName);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.warn("New Span with spanName:" + spanName + " exception", e);
 		}
 	}
 
@@ -61,7 +69,7 @@ public class Hunter {
 		try {
 			Hunter.TRACER.get().submitAnnotation(annotationName);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.warn("Submit annotation with name: " + annotationName + " exception", e);
 		}
 	}
 
@@ -72,7 +80,7 @@ public class Hunter {
 		try {
 			Hunter.TRACER.get().collect();
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.warn("Collect trace log eception: ",e);
 		}
 	}
 
@@ -83,16 +91,16 @@ public class Hunter {
 		try {
 			Hunter.TRACER.remove();
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.warn("Clear thread local exception:", e);
 		}
 	}
 	
 	static Long getTraceId() {
-		Long id = 0L;
+		Long id = NULL_TRACE_ID;
 		try {
-			id =  Hunter.TRACER.get().getTraceId();
+			id = Hunter.TRACER.get().getTheTraceId();
 		} catch (Exception e) {
-			e.printStackTrace();
+			//这里不能使用Logger打Log，会引起死循环
 		}
 		return id;
 	}

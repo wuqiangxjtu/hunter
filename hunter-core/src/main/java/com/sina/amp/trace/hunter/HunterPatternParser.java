@@ -38,11 +38,7 @@ public class HunterPatternParser extends PatternParser {
 		 */
 		@Override
 		protected String convert(LoggingEvent event) {
-			String traceId = "NULL";
-			if(Hunter.getTraceId() != null) {
-				traceId = "[ Trace id: " + Hunter.getTraceId().toString() + " ]";
-			}
-			return traceId;
+			return "[ Trace id: " + Hunter.getTraceId().toString() + " ]";
 		}
 
 	}
