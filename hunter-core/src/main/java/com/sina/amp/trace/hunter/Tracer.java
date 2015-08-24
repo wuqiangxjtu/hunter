@@ -24,20 +24,32 @@ public class Tracer {
 	private AtomicBoolean IS_SAMPLE = new AtomicBoolean(true);
 
 	public Tracer(ThreadState state, SpanCollector spanCollector,
-			TraceFilters traceFilters, Long traceId, Long parentId) {
+			TraceFilters traceFilters, Long traceId, Long parentId, Boolean isSample) {
 		this.state = state;
 		this.spanCollector = spanCollector;
 		this.traceId = traceId;
 		this.parentId = parentId;
-		if(traceFilters != null) {
+		
+		//没有traceId，无法进行跟踪
+		if(traceId == null) {
+			IS_SAMPLE.set(false);
+		
+		//isSample != null, 说明有上游，同事parentId == null, 证明调用有错误，所以无法跟踪
+		}else if(traceId != null && parentId == null && isSample != null) {
+			IS_SAMPLE.set(false);
+			
+		//有isSample时，优先使用isSample的值；如果没有，则使用filter过滤
+		}else if(traceId != null && parentId != null && isSample != null) {
+			IS_SAMPLE.set(isSample);
+		
+		}else if(traceId != null && parentId != null && isSample == null) {
 			for (TraceFilter traceFilter : traceFilters.getTraceFilters()) {
 				if (!traceFilter.trace(state.getEndpoint().getService_name())) {
 					IS_SAMPLE.set(false);
 				}
 			}
 		}
-
-
+	
 	}
 
 	public void collect() {

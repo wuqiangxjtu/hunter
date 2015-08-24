@@ -15,14 +15,7 @@ public class FirstService {
 
 	public void serviceA() {
 		log.info("-----------serviceA-----------");
-		Hunter.newSpanWithServerRecvAnnotation("serviceA");
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		
+		Hunter.newSpanWithServerRecvAnnotation("serviceA");		
 		serviceB();
 		Hunter.submitServerSendAnnotationAndCollect();
 		
@@ -33,8 +26,6 @@ public class FirstService {
 	public void serviceB() {
 		log.info("-----------serviceB-----------");
 		Hunter.newSpanWithServerRecvAnnotation("serviceB");
-		
-		
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
