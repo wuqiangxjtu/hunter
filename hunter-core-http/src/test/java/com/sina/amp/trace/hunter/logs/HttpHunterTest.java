@@ -8,16 +8,14 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import com.github.kristofa.brave.LoggingSpanCollector;
 import com.github.kristofa.brave.SpanCollector;
 import com.github.kristofa.brave.TraceFilter;
 import com.sina.amp.trace.hunter.FixedSampleRateTraceFilter;
-import com.sina.amp.trace.hunter.HunterHttpHeaders;
-import com.sina.amp.trace.hunter.MixSpanCollector;
 import com.sina.amp.trace.hunter.TraceFilters;
 import com.sina.amp.trace.hunter.http.HttpHunter;
 import com.sina.amp.trace.hunter.service.FirstService;
@@ -29,7 +27,7 @@ public class HttpHunterTest {
 	TraceFilters traceFilters;
 	FirstService firstService;
 	
-	@Before
+	@BeforeMethod
 	public void before() {
 		//Mock
 		request = mock(HttpServletRequest.class);
@@ -54,7 +52,7 @@ public class HttpHunterTest {
 		firstService.serviceA();
 	}
 	
-	@After
+	@AfterMethod
 	public void after() {
 		try {
 			Thread.sleep(20000);
