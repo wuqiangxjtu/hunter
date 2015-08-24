@@ -23,7 +23,7 @@ public class Hunter {
 			SpanCollector spanCollector, final TraceFilters traceFilters) {
 		try {
 			Hunter.startTracer(ip, port, serviceName, spanCollector, traceFilters,
-					RANDOM_GENERATOR.nextLong(),null);
+					RANDOM_GENERATOR.nextLong(),null, null);
 		} catch (Exception e) {
 			LOG.warn("start trace exception:" + e);
 		}
@@ -32,10 +32,10 @@ public class Hunter {
 
 	protected static void startTracer(String ip, int port, String serviceName,
 			SpanCollector spanCollector, final TraceFilters traceFilters,
-			Long traceId, Long parentId) {
+			Long traceId, Long parentId, Boolean isSample) {
 		try {
 			Hunter.TRACER.set(new Tracer(new ThreadState(ip, port, serviceName),
-					spanCollector, traceFilters, traceId, parentId));
+					spanCollector, traceFilters, traceId, parentId, isSample));
 		} catch (Exception e) {
 			LOG.warn("start trace exception:" + e);
 		}
