@@ -26,8 +26,10 @@ public class HttpHunter extends Hunter {
 
 			Long traceId = null;
 			try {
-				traceId = Long.parseLong(request
-						.getHeader(HttpHunterHeaders.TraceId.getName()));
+				if(request.getHeader(HttpHunterHeaders.TraceId.getName()) != null) {
+					traceId = Long.parseLong(request.getHeader(HttpHunterHeaders.TraceId.getName()));
+				}
+				
 			} catch (NumberFormatException e) {
 				// 这条日志只有默认的traceId，因为traceId还没有初始化
 				LOG.debug(
@@ -38,8 +40,9 @@ public class HttpHunter extends Hunter {
 
 			Long parentId = null;
 			try {
-				parentId = Long.parseLong(request
-						.getHeader(HttpHunterHeaders.SpanId.getName()));
+				if(request.getHeader(HttpHunterHeaders.SpanId.getName()) != null) {
+					parentId = Long.parseLong(request.getHeader(HttpHunterHeaders.SpanId.getName()));
+				}
 			} catch (NumberFormatException e) {
 				// 这条日志只有默认的traceId，因为traceId还没有初始化
 				LOG.debug("The parent id get from the http header can not parseLong: parentId: "

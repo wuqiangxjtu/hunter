@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<constant name="struts.devMode" value="false" />
+
+	<constant name="struts.custom.i18n.resources" value="message" />
+	<constant name="struts.enable.DynamicMethodInvocation" value="false" />
+	<constant name="struts.multipart.maxSize" value="10485760" />
+	<!-- <constant name="struts.objectFactory" value="org.apache.struts2.spring.StrutsSpringObjectFactory" 
+		/> -->
+
+
+
+	<package name="sax-default" extends="struts-default">
+		<!-- 自定义返回类型 -->
+		<result-types>
+			<!-- 返回值支持json格式 -->
+			<result-type name="json" class="org.apache.struts2.json.JSONResult" />
+		</result-types>
+
+
+
+		<!-- 自定义拦截器 -->
+		<interceptors>
+			<interceptor name="monitor"
+				class="com.sina.amp.trace.hunter.struts2.interceptor.MonitorHandlerInterceptor" />
+			<interceptor-stack name="sax-stack">
+				<interceptor-ref name="monitor" />
+				<interceptor-ref name="store">
+					<param name="operationMode">AUTOMATIC</param>
+				</interceptor-ref>
+				<interceptor-ref name="alias" />
+				<interceptor-ref name="params">
+					<param name="excludeParams"><![CDATA[.*[\\/\(\)#@'"\<\>].*]]></param>
+				</interceptor-ref>
+				<interceptor-ref name="i18n" />
+				<interceptor-ref name="chain" />
+				<interceptor-ref name="modelDriven" />
+				<interceptor-ref name="checkbox" />
+				<interceptor-ref name="params">
+					<param name="excludeParams"><![CDATA[.*[\\/\(\)#@'"\<\>].*]]></param>
+				</interceptor-ref>
+				<interceptor-ref name="validation" />
+				
+			</interceptor-stack>
+
+		</interceptors>
+		<default-interceptor-ref name="sax-stack" />
+
+		<global-results>
+			<result name="json" type="json">
+				<param name="root">jsonObject</param>
+			</result>
+			<!-- <result name="json">/common/json.jsp</result> -->
+		</global-results>
+
+		<action name="hello"
+			class="com.sina.amp.trace.hunter.struts2.controller.HelloController"
+			method="hello">
+		</action>
+		<action name="happy"
+			class="com.sina.amp.trace.hunter.struts2.controller.HelloController"
+			method="happy" />
+	</package>
+
+
+
+
+</struts>
