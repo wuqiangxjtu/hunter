@@ -4,6 +4,7 @@ import java.util.EmptyStackException;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.alibaba.fastjson.JSON;
 import com.github.kristofa.brave.SpanCollector;
 import com.github.kristofa.brave.TraceFilter;
 import com.twitter.zipkin.gen.Annotation;
@@ -54,7 +55,9 @@ public class Tracer {
 
 	public void collect() {
 		if (IS_SAMPLE.get()) {
-			this.spanCollector.collect(state.pop());
+			Span span = state.pop();
+//			System.out.println("--------------->>>>>"+JSON.toJSONString(span));;
+			this.spanCollector.collect(span);
 		}
 
 	}
