@@ -26,7 +26,7 @@ public class LoggingSpanCollector implements SpanCollector{
     private static final String UTF_8 = "UTF-8";
 
     private final Logger logger;
-    private final Set<BinaryAnnotation> defaultAnnotations = new LinkedHashSet<>();
+    private final Set<BinaryAnnotation> defaultAnnotations = new LinkedHashSet();
 
     public LoggingSpanCollector() {
         logger = LoggerFactory.getLogger(LoggingSpanCollector.class);

@@ -21,7 +21,7 @@ public class TraceFilters {
      * @param traceFilters List of Trace Filters.
      */
     public TraceFilters(final List<TraceFilter> traceFilters) {
-        filters = new ArrayList<>(traceFilters);
+        filters = new ArrayList(traceFilters);
     }
 
     /**
