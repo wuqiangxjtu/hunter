@@ -16,6 +16,8 @@ public class HttpHunter extends Hunter {
 
 	public static final String TRUE = "true";
 	public static final String FLASE = "false";
+	
+	private static String suffix;
 
 	public static void startTracer(final HttpServletRequest request,
 			SpanCollector spanCollector, final TraceFilters traceFilters) {
@@ -101,6 +103,15 @@ public class HttpHunter extends Hunter {
 	}
 
 	private static String getServiceName(final HttpServletRequest request) {
-		return request.getRequestURI();
+		if(suffix != null && !"".equals(suffix)) {
+			return request.getRequestURI().substring(0, request.getRequestURI().lastIndexOf(suffix) + suffix.length());
+		}else {
+			return request.getRequestURI();
+		}
+	}
+	
+
+	public static void setSuffix(String suffix) {
+		HttpHunter.suffix = suffix;
 	}
 }
