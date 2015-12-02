@@ -8,6 +8,15 @@ import org.slf4j.LoggerFactory;
 import com.github.kristofa.brave.SpanCollector;
 import com.twitter.zipkin.gen.zipkinCoreConstants;
 
+/**
+ * 对外暴露，通过该类可以完成以下工作：
+ * 1. 设置开始
+ * 2. 设置完成
+ * 3. 添加span
+ * 4. 添加annotation
+ * @author wuqiang
+ *
+ */
 public class Hunter {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(Hunter.class);
