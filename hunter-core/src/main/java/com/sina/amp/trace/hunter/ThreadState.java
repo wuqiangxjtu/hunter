@@ -26,7 +26,7 @@ public class ThreadState {
     	return endpoint;
     }
 
-    public void push(Span span) {
+    public synchronized void push(Span span) {
     	spanStack.push(span);
     }
     

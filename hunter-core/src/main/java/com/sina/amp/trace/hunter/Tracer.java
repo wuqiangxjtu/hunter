@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.alibaba.fastjson.JSON;
 import com.github.kristofa.brave.SpanCollector;
 import com.github.kristofa.brave.TraceFilter;
+import com.sina.amp.trace.hunter.utils.ObjectUtil;
 import com.twitter.zipkin.gen.Annotation;
 import com.twitter.zipkin.gen.Span;
 
@@ -17,46 +18,60 @@ public class Tracer {
 	private final SpanCollector spanCollector;
 
 	private final ThreadState state;
-	
+
 	private final Long traceId;
-	
+
 	private final Long parentId;
 
+	// 是否采样
 	private AtomicBoolean IS_SAMPLE = new AtomicBoolean(true);
+	
+	public static Tracer getTracer(ThreadState state,
+			SpanCollector spanCollector, Long traceId) {
+		ObjectUtil.notNull(state, spanCollector, traceId);
+		return new Tracer(state, spanCollector, null, traceId, null,
+				null);
+	}
 
-	public Tracer(ThreadState state, SpanCollector spanCollector,
-			TraceFilters traceFilters, Long traceId, Long parentId, Boolean isSample) {
+	public static Tracer getTracer(ThreadState state,
+			SpanCollector spanCollector, TraceFilters traceFilters, Long traceId) {
+		ObjectUtil.notNull(state, spanCollector, traceFilters, traceId);
+		return new Tracer(state, spanCollector, traceFilters, traceId, null,
+				null);
+	}
+
+	public static Tracer getTracer(ThreadState state, SpanCollector spanCollector,
+			TraceFilters traceFilters, Long traceId, Long parentId,
+			Boolean isSample) {
+		ObjectUtil.notNull(state, spanCollector,traceFilters, traceId, parentId, isSample);
+		return new Tracer(state, spanCollector, traceFilters, traceId, parentId, isSample);
+	}
+
+	private Tracer(ThreadState state, SpanCollector spanCollector,
+			TraceFilters traceFilters, Long traceId, Long parentId,
+			Boolean isSample) {
 		this.state = state;
 		this.spanCollector = spanCollector;
 		this.traceId = traceId;
 		this.parentId = parentId;
-		
-		//没有traceId，无法进行跟踪
-		if(traceId == null) {
-			IS_SAMPLE.set(false);
-		
-		//isSample != null, 说明有上游，同事parentId == null, 证明调用有错误，所以无法跟踪
-		}else if(traceId != null && parentId == null && isSample != null) {
-			IS_SAMPLE.set(false);
-			
-		//有isSample时，优先使用isSample的值；如果没有，则使用filter过滤
-		}else if(traceId != null && parentId != null && isSample != null) {
-			IS_SAMPLE.set(isSample);
-		
-		}else if(traceId != null && parentId != null && isSample == null) {
+
+		if (!hasParent(parentId) && traceFilters != null) {
 			for (TraceFilter traceFilter : traceFilters.getTraceFilters()) {
 				if (!traceFilter.trace(state.getEndpoint().getService_name())) {
 					IS_SAMPLE.set(false);
 				}
 			}
 		}
-	
+	}
+
+	private boolean hasParent(Long parentId) {
+		return parentId != null;
 	}
 
 	public void collect() {
 		if (IS_SAMPLE.get()) {
 			Span span = state.pop();
-//			System.out.println("--------------->>>>>"+JSON.toJSONString(span));;
+			// System.out.println("--------------->>>>>"+JSON.toJSONString(span));;
 			this.spanCollector.collect(span);
 		}
 
@@ -74,15 +89,15 @@ public class Tracer {
 				Span currentSpan = null;
 				currentSpan = state.peek();
 				long newSpanId = RANDOM_GENERATOR.nextLong();
-				Span newSpan = new Span(this.traceId, spanName,
-						newSpanId, null, null);
+				Span newSpan = new Span(this.traceId, spanName, newSpanId,
+						null, null);
 				newSpan.setParent_id(currentSpan.getId());
 				state.push(newSpan);
 
 			} catch (EmptyStackException e) {
-				Span newSpan = new Span(this.traceId, spanName, this.traceId, null,
-						null);
-				if(this.parentId != null) {
+				Span newSpan = new Span(this.traceId, spanName, this.traceId,
+						null, null);
+				if (this.parentId != null) {
 					newSpan.setParent_id(this.parentId);
 				}
 				state.push(newSpan);
@@ -141,9 +156,29 @@ public class Tracer {
 			span.addToAnnotations(annotation);
 		}
 	}
-	
-	public Long getTheTraceId() {
+
+	protected Long getTheTraceId() {
 		return traceId;
+	}
+	
+	protected AtomicBoolean getIS_SAMPLE() {
+		return IS_SAMPLE;
+	}
+
+	protected SpanCollector getSpanCollector() {
+		return spanCollector;
+	}
+
+	protected ThreadState getState() {
+		return state;
+	}
+
+	protected Long getTraceId() {
+		return traceId;
+	}
+
+	protected Long getParentId() {
+		return parentId;
 	}
 
 }

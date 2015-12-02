@@ -33,26 +33,36 @@ public class HunterTest {
 		firstService = new FirstService();
 //		spanCollector = new MixSpanCollector("localhost", 9410);
 		spanCollector = new LoggingSpanCollector();
+		
 	}
 	
+	@Test
+	public void testStartTrace() {
+		Long traceId = 12356L;
+		Long parentId = 65321L;
+		boolean isSample = false;
+		Hunter.startTrace(ip, port, serviceName, spanCollector, traceFilters, traceId, parentId, isSample);
+		
+		
+	}
 	
 	@Test(description="traceId, parentId,isSample都是null, 日志正常，并且打印的traceId是非默认traceId")
 	public void testService1() {
-		Hunter.startTracer(ip, port, serviceName, spanCollector, null);
+		Hunter.startTraceWithNewTraceId(ip, port, serviceName, spanCollector, null);
 		firstService.serviceA();
 		Hunter.endTrace();
 	}
 	
 	@Test(description="traceId不为空，parentId不为空，isSample为假的情况下，不跟踪")
 	public void testService2() {
-		Hunter.startTracer(ip, port, serviceName, spanCollector, null, 1L, 11L, false);
+		Hunter.startTrace(ip, port, serviceName, spanCollector, null, 1L, 11L, false);
 		firstService.serviceA();
 		Hunter.endTrace();
 	}
 	
 	@Test(description="endTrace后调用newSpan等，warning日志中记录了NullpointException，并且被正确捕获")
 	public void testService3() {
-		Hunter.startTracer(ip, port, serviceName, spanCollector, null, 1L, 11L, false);
+		Hunter.startTrace(ip, port, serviceName, spanCollector, null, 1L, 11L, false);
 //		firstService.serviceA();
 		Hunter.endTrace();
 		firstService.serviceA();
@@ -60,7 +70,7 @@ public class HunterTest {
 	
 	@Test(description="traceId不为空，parentId不为空，isSample为真的情况下，跟踪，并且打印传入的traceId")
 	public void testService4() {
-		Hunter.startTracer(ip, port, serviceName, spanCollector, null, 1L, 11L, true);
+		Hunter.startTrace(ip, port, serviceName, spanCollector, null, 1L, 11L, true);
 		firstService.serviceA();
 		Hunter.endTrace();
 	}
