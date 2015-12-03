@@ -17,13 +17,14 @@ import com.github.kristofa.brave.SpanCollector;
 import com.github.kristofa.brave.TraceFilter;
 import com.sina.amp.trace.hunter.FixedSampleRateTraceFilter;
 import com.sina.amp.trace.hunter.TraceFilters;
+import com.sina.amp.trace.hunter.helper.TestSpanCollector;
 import com.sina.amp.trace.hunter.http.HttpHunter;
 import com.sina.amp.trace.hunter.service.FirstService;
 
 public class HttpHunterTest {
 	
 	HttpServletRequest request;
-	SpanCollector spanCollector;
+	TestSpanCollector spanCollector;
 	TraceFilters traceFilters;
 	FirstService firstService;
 	
@@ -32,16 +33,18 @@ public class HttpHunterTest {
 		//Mock
 		request = mock(HttpServletRequest.class);
 		
+		List<TraceFilter> traceList = new ArrayList<TraceFilter>();
+		traceList.add(new FixedSampleRateTraceFilter(1));
+		traceFilters = new TraceFilters(traceList);
+		
+//		spanCollector = new MixSpanCollector("localhost",9410);
+		spanCollector = new TestSpanCollector();
+		
 	}
 	
 
 	@Test
-	public void testTraceId() {
-		List<TraceFilter> traceList = new ArrayList<TraceFilter>();
-		traceList.add(new FixedSampleRateTraceFilter(1));
-		traceFilters = new TraceFilters(traceList);
-//		spanCollector = new MixSpanCollector("localhost",9410);
-		spanCollector = new LoggingSpanCollector();
+	public void testTraceWithNoParent() {
 //		when(request.getHeader(HunterHttpHeaders.TraceId.getName())).thenReturn("5415072796348909485");
 //		when(request.getHeader(HunterHttpHeaders.SpanId.getName())).thenReturn("5267450487794558943");
 		when(request.getRequestURI()).thenReturn("/hunter/http/test111");
@@ -54,11 +57,8 @@ public class HttpHunterTest {
 	
 	@Test
 	public void testWithActionSuffix1() {
-		List<TraceFilter> traceList = new ArrayList<TraceFilter>();
-		traceList.add(new FixedSampleRateTraceFilter(1));
-		traceFilters = new TraceFilters(traceList);
-//		spanCollector = new MixSpanCollector("localhost",9410);
-		spanCollector = new LoggingSpanCollector();
+		
+		
 //		when(request.getHeader(HunterHttpHeaders.TraceId.getName())).thenReturn("5415072796348909485");
 //		when(request.getHeader(HunterHttpHeaders.SpanId.getName())).thenReturn("5267450487794558943");
 		when(request.getRequestURI()).thenReturn("/hunter/http/test111.action;tewltjljdslfjsdljfldsjflsj");
@@ -72,11 +72,7 @@ public class HttpHunterTest {
 	
 	@Test
 	public void testWithActionSuffix2() {
-		List<TraceFilter> traceList = new ArrayList<TraceFilter>();
-		traceList.add(new FixedSampleRateTraceFilter(1));
-		traceFilters = new TraceFilters(traceList);
-//		spanCollector = new MixSpanCollector("localhost",9410);
-		spanCollector = new LoggingSpanCollector();
+		
 //		when(request.getHeader(HunterHttpHeaders.TraceId.getName())).thenReturn("5415072796348909485");
 //		when(request.getHeader(HunterHttpHeaders.SpanId.getName())).thenReturn("5267450487794558943");
 		when(request.getRequestURI()).thenReturn("/hunter/http/test111.action;tewltjljdslfjsdljfldsjflsj");

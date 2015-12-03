@@ -17,8 +17,6 @@ public class FirstService {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
-		
 		serviceB();
 		HttpHunter.submitServerSendAnnotationAndCollect();
 		

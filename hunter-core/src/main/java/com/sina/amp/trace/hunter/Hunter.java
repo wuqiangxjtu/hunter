@@ -86,9 +86,7 @@ public class Hunter {
 		Hunter.submitAnnotation(zipkinCoreConstants.SERVER_RECV);
 	}
 
-	/**
-	 * 
-	 */
+
 	public static void submitServerSendAnnotationAndCollect() {
 		Hunter.submitAnnotation(zipkinCoreConstants.SERVER_SEND);
 		Hunter.collect();
@@ -140,7 +138,7 @@ public class Hunter {
 	/**
 	 * 清理ThreadLocal
 	 */
-	protected static void endTrace() {
+	public static void endTrace() {
 		try {
 			Hunter.TRACER.remove();
 		} catch (Exception e) {
