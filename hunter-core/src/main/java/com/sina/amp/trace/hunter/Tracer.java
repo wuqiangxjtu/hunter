@@ -20,7 +20,8 @@ public class Tracer {
 	private final ThreadState state;
 
 	private final Long traceId;
-
+	
+	//这里实际上是parent Span id，由于zipkin定义中是parent id，所以沿用了这个名称
 	private final Long parentId;
 
 	// 是否采样
