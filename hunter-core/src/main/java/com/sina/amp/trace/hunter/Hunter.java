@@ -50,7 +50,6 @@ public class Hunter {
 		} catch (Exception e) {
 			LOG.warn("start trace exception:" + StackTraceUtil.getStackTrace(e));
 		}
-
 	}
 	
 	protected static void startTraceWithParent(String ip, int port, String serviceName,

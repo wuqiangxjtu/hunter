@@ -17,8 +17,6 @@ public class HttpHunter extends Hunter {
 	public static final String TRUE = "true";
 	public static final String FLASE = "false";
 
-	public static final Long NONSENSE_PARENT_ID = 1000L;
-
 	private static String suffix;
 
 	public static void startTracer(final HttpServletRequest request,
