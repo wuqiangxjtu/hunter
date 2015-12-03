@@ -18,9 +18,6 @@ public class FirstService {
 		Hunter.newSpanWithServerRecvAnnotation("serviceA");		
 		serviceB();
 		Hunter.submitServerSendAnnotationAndCollect();
-		
-
-		
 	}
 	
 	public void serviceB() {

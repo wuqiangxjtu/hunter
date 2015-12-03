@@ -25,12 +25,11 @@ public class Tracer {
 
 	// 是否采样
 	private AtomicBoolean IS_SAMPLE = new AtomicBoolean(true);
-	
+
 	public static Tracer getTracer(ThreadState state,
 			SpanCollector spanCollector, Long traceId) {
 		ObjectUtil.notNull(state, spanCollector, traceId);
-		return new Tracer(state, spanCollector, null, traceId, null,
-				null);
+		return new Tracer(state, spanCollector, null, traceId, null, null);
 	}
 
 	public static Tracer getTracer(ThreadState state,
@@ -39,13 +38,26 @@ public class Tracer {
 		return new Tracer(state, spanCollector, traceFilters, traceId, null,
 				null);
 	}
-
-	public static Tracer getTracer(ThreadState state, SpanCollector spanCollector,
-			TraceFilters traceFilters, Long traceId, Long parentId,
+	
+	public static Tracer getTracer(ThreadState state,
+			SpanCollector spanCollector, Long traceId, Long parentId,
 			Boolean isSample) {
-		ObjectUtil.notNull(state, spanCollector,traceFilters, traceId, parentId, isSample);
-		return new Tracer(state, spanCollector, traceFilters, traceId, parentId, isSample);
+		ObjectUtil.notNull(state, spanCollector, traceId,
+				parentId, isSample);
+		return new Tracer(state, spanCollector, null, traceId,
+				parentId, isSample);
 	}
+
+	public static Tracer getTracer(ThreadState state,
+			SpanCollector spanCollector, TraceFilters traceFilters,
+			Long traceId, Long parentId, Boolean isSample) {
+		ObjectUtil.notNull(state, spanCollector, traceFilters, traceId,
+				parentId, isSample);
+		return new Tracer(state, spanCollector, traceFilters, traceId,
+				parentId, isSample);
+	}
+
+
 
 	private Tracer(ThreadState state, SpanCollector spanCollector,
 			TraceFilters traceFilters, Long traceId, Long parentId,
@@ -55,11 +67,18 @@ public class Tracer {
 		this.traceId = traceId;
 		this.parentId = parentId;
 
-		if (!hasParent(parentId) && traceFilters != null) {
-			for (TraceFilter traceFilter : traceFilters.getTraceFilters()) {
-				if (!traceFilter.trace(state.getEndpoint().getService_name())) {
-					IS_SAMPLE.set(false);
-				}
+		if(hasParent(parentId)) {
+			this.IS_SAMPLE.set(isSample);
+		}else if(!hasParent(parentId) && traceFilters != null) {
+			setIsSampleWithFilters(state, traceFilters);
+		}
+	}
+
+	private void setIsSampleWithFilters(ThreadState state,
+			TraceFilters traceFilters) {
+		for (TraceFilter traceFilter : traceFilters.getTraceFilters()) {
+			if (!traceFilter.trace(state.getEndpoint().getService_name())) {
+				IS_SAMPLE.set(false);
 			}
 		}
 	}
@@ -160,7 +179,7 @@ public class Tracer {
 	protected Long getTheTraceId() {
 		return traceId;
 	}
-	
+
 	protected AtomicBoolean getIS_SAMPLE() {
 		return IS_SAMPLE;
 	}

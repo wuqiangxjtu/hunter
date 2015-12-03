@@ -29,6 +29,18 @@ public class Hunter {
 	protected static final Long NULL_TRACE_ID = 9999999999999L;
 
 	public static void startTraceWithNewTraceId(String ip, int port,
+			String serviceName, SpanCollector spanCollector) {
+		try {
+			Hunter.TRACER.set(Tracer.getTracer(new ThreadState(ip, port,
+					serviceName), spanCollector, RANDOM_GENERATOR
+					.nextLong()));
+		} catch (Exception e) {
+			LOG.warn("start trace exception:" + StackTraceUtil.getStackTrace(e));
+		}
+
+	}
+	
+	public static void startTraceWithNewTraceId(String ip, int port,
 			String serviceName, SpanCollector spanCollector,
 			final TraceFilters traceFilters) {
 		try {
@@ -40,19 +52,29 @@ public class Hunter {
 		}
 
 	}
+	
+	protected static void startTraceWithParent(String ip, int port, String serviceName,
+			SpanCollector spanCollector, Long traceId, Long parentId, Boolean isSample) {
+		try {
+			Hunter.TRACER.set(Tracer.getTracer(new ThreadState(ip, port,
+					serviceName), spanCollector, traceId, parentId, isSample));
+		} catch (Exception e) {
+			LOG.warn("start trace exception:" + StackTraceUtil.getStackTrace(e));
+		}
+	}
 
-	protected static void startTrace(String ip, int port, String serviceName,
+	protected static void startTraceWithParent(String ip, int port, String serviceName,
 			SpanCollector spanCollector, final TraceFilters traceFilters,
 			Long traceId, Long parentId, Boolean isSample) {
 		try {
 			Hunter.TRACER.set(Tracer.getTracer(new ThreadState(ip, port,
-					serviceName), spanCollector, traceFilters, RANDOM_GENERATOR
-					.nextLong(), parentId, isSample));
+					serviceName), spanCollector, traceFilters, traceId, parentId, isSample));
 		} catch (Exception e) {
 			LOG.warn("start trace exception:" + StackTraceUtil.getStackTrace(e));
 		}
-
 	}
+	
+	
 
 	/**
 	 * 本地方法调用时，不需要Client send和Client receive， 只使用Server receive和Service send就可以了
@@ -77,15 +99,7 @@ public class Hunter {
 		Hunter.submitAnnotation(zipkinCoreConstants.CLIENT_SEND);
 	}
 
-	public static void submitServerRecvAnnotation() {
-		Hunter.submitAnnotation(zipkinCoreConstants.SERVER_RECV);
-	}
-
-	public static void submitServerSendAnnotation() {
-		Hunter.submitAnnotation(zipkinCoreConstants.SERVER_SEND);
-	}
-
-	public static void submitClientRecvAnnotation() {
+	public static void submitClientRecvAnnotationAndCollect() {
 		Hunter.submitAnnotation(zipkinCoreConstants.CLIENT_RECV);
 		Hunter.collect();
 	}
