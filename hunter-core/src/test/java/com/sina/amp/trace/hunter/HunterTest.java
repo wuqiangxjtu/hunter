@@ -8,8 +8,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.github.kristofa.brave.LoggingSpanCollector;
-import com.github.kristofa.brave.SpanCollector;
 import com.github.kristofa.brave.TraceFilter;
 import com.sina.amp.trace.hunter.helper.TestSpanCollector;
 import com.sina.amp.trace.hunter.service.FirstService;
@@ -93,6 +91,8 @@ public class HunterTest {
 		Assert.assertEquals(spanCollector.getSpans().get(0).getParent_id(), spanCollector.getSpans().get(1).getId());
 		Assert.assertEquals(spanCollector.getSpans().get(1).getParent_id(), parentId);
 	}
+	
+	
 	
 	@AfterMethod
 	public void afterMethod() throws InterruptedException {

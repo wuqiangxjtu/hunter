@@ -73,6 +73,11 @@ public class Hunter {
 		}
 	}
 	
+	protected static void startTraceWithTraceIdForTest(String ip, int port, String serviceName,
+			SpanCollector spanCollector, Long traceId) {
+		Hunter.TRACER.set(Tracer.getTracer(new ThreadState(ip, port,
+				serviceName), spanCollector, traceId));
+	}
 	
 
 	/**
